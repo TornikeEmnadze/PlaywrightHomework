@@ -4,8 +4,8 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 public class LoginPage {
-    public final Locator createAccountButton;
-    public final Locator pageTitle;
+    public Locator createAccountButton;
+    public Locator pageTitle;
     public Locator emailInput;
     public Locator passwordInput;
     public Locator signInButton;

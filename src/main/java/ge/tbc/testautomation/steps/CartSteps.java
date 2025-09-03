@@ -1,6 +1,8 @@
 package ge.tbc.testautomation.steps;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.WaitForSelectorState;
 import ge.tbc.testautomation.pages.HomePage;
 import ge.tbc.testautomation.pages.ProductPage;
 import ge.tbc.testautomation.pages.SearchResultPage;
@@ -9,6 +11,8 @@ import org.testng.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 public class CartSteps {
     private Page page;
@@ -80,6 +84,53 @@ public class CartSteps {
         return this;
     }
 
+
+    public CartSteps selectProductFromResultsAndVerify(String productName) {
+        searchResultsPage.productItemLinks.first().click();
+        productPage.productName.waitFor();
+        assertThat(productPage.productName).hasText(productName);
+        return this;
+    }
+
+    public CartSteps configureProductAndAddToCart(String size, String color, String productName) {
+        page.locator(".swatch-option.text[aria-label='" + size + "']").click();
+        page.locator(".swatch-option.color[aria-label='" + color + "']").click();
+
+        productPage.addToCartButton.click();
+        productPage.successMessageAlert.waitFor();
+        assertThat(productPage.successMessageAlert).containsText("You added " + productName + " to your");
+        return this;
+    }
+
+    public CartSteps addSimpleProductToCart(String productName) {
+        search(productName);
+        searchResultsPage.productItemLinks.first().click();
+        productPage.productName.waitFor();
+        productPage.addToCartButton.click();
+        productPage.successMessageAlert.waitFor();
+        assertThat(productPage.successMessageAlert).containsText("You added " + productName + " to your");
+        return this;
+    }
+
+    public CartSteps navigateToCartPage() {
+        homePage.cartIcon.click();
+        homePage.viewCartLink.click();
+        shoppingCartPage.productNameInCart.first().waitFor();
+        return this;
+    }
+
+    public CartSteps verifyItemIsPresent(String productName) {
+        assertThat(page.locator("td.col.item", new Page.LocatorOptions().setHasText(productName))).isVisible();
+        return this;
+    }
+
+    public CartSteps updateItemQuantity(String productName, int quantity) {
+        Locator productRow = page.locator("tr.item-info", new Page.LocatorOptions().setHasText(productName));
+        productRow.locator("input[title='Qty']").fill(String.valueOf(quantity));
+        shoppingCartPage.updateCartButton.click();
+        page.locator(".loading-mask").waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.HIDDEN));
+        return this;
+    }
 
 
 }

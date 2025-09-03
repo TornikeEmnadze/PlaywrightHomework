@@ -22,6 +22,7 @@ public class HomePage {
     public Locator signOutLink;
     public Locator accountDropdown;
     public Locator mywishList;
+    public Locator proceedToCheckoutButton;
 
     public HomePage(Page page){
         this.hotSellerItems=page.locator(".widget-product-grid .product-item");
@@ -47,7 +48,7 @@ public class HomePage {
         ).filter(new Locator.FilterOptions().setHas(page.locator("button[data-action='customer-menu-toggle']")));
         this.signOutLink = page.locator("div.customer-menu li.authorization-link:visible").getByText("Sign Out");
         this.mywishList=page.locator("a[href='https://magento.softwaretestingboard.com/wishlist/']").first();
-        ;
+        this.proceedToCheckoutButton = page.locator("button#top-cart-btn-checkout");
 
 
     }

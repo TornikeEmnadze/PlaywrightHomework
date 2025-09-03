@@ -19,6 +19,7 @@ public class ProductPage {
     public Locator reviewsTab;
     public Locator reviewItems;
     public Locator youAreReviewingText;
+    public Locator greenColorSwatch;
 
     public ProductPage(Page page) {
         this.productName = page.locator(".page-title .base");
@@ -36,5 +37,6 @@ public class ProductPage {
         this.reviewItems=page.locator(".review-items .review-item");
         this.reviewsTab=page.locator("#reviews");
         this.youAreReviewingText=page.getByText("You're reviewing:");
+        this.greenColorSwatch = page.locator(".swatch-option.color[aria-label='Green']");
     }
 }
