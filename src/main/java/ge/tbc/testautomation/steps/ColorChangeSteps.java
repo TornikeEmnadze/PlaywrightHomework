@@ -20,6 +20,7 @@ public class ColorChangeSteps {
     @Step("Navigate to page: {0}")
     public ColorChangeSteps navigateToPage(String url) {
         page.navigate(url);
+        System.out.println("I AM A FIX");
         return this;
     }
 

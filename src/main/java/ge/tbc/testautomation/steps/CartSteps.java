@@ -31,6 +31,7 @@ public class CartSteps {
     @Step("Navigate to Home Page: {0}")
     public CartSteps navigateToHomePage(String url) {
         page.navigate(url);
+        System.out.println("I AM A FIX");
         return this;
     }
 
