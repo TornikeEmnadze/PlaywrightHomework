@@ -30,7 +30,7 @@ public class AuthSteps {
     @Step("Navigate to Home Page: {0}")
     public AuthSteps navigateToHomePage(String url) {
         page.navigate(url);
-        System.out.println("I AM A FIX");
+        System.out.println("I AM A CHANGE MEANWHILE");
         return this;
     }
 
