@@ -3,6 +3,7 @@ package ge.tbc.testautomation.tests;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import ge.tbc.testautomation.constants.Constants;
+import io.qameta.allure.*;
 import org.testng.annotations.*;
 
 import java.util.Arrays;
@@ -10,6 +11,9 @@ import java.util.Arrays;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.testng.Assert.assertEquals;
 
+@Epic("User Account Features (Shared User)")
+@Feature("Product Interaction and State Persistence")
+@Link(name = "Practice Software Testing", url = "https://practicesoftwaretesting.com/")
 public class SharedUserTests {
     private static Playwright playwright;
     private static Browser browser;
@@ -73,7 +77,10 @@ public class SharedUserTests {
         playwright.close();
     }
 
-    @Test(priority = 1)
+    @Test(priority = 1, description = "Verify favorites persistence across sessions for a shared user")
+    @Story("User favorites persist after logging out and back in")
+    @Severity(SeverityLevel.BLOCKER)
+    @Description("Adds a product to favorites, logs out, logs back in with the same user, and verifies the product is still in the favorites list.")
     public void favouritesTest() {
         Locator firstProduct = page.locator("a.card").first();
         favouriteProduct = firstProduct.locator("[data-test='product-name']").textContent().trim();
@@ -92,7 +99,9 @@ public class SharedUserTests {
         assertThat(page.locator("[data-test='product-name']:has-text('" + favouriteProduct + "')")).isVisible();
     }
 
-    @Test(priority = 2)
+    @Test(priority = 2, description = "Validate product category filtering logic for a shared user")
+    @Story("User can filter products")
+    @Severity(SeverityLevel.NORMAL)
     public void filterTest() {
         assertThat(page.locator("a.card")).hasCount(9);
         int initialCount = page.locator("a.card").count();
@@ -122,7 +131,10 @@ public class SharedUserTests {
 
 
 
-    @Test(priority = 3, dependsOnMethods = "favouritesTest")
+    @Test(priority = 3, dependsOnMethods = "favouritesTest", description = "Verify removing a favorite persists across sessions")
+    @Story("User favorites persist after logging out and back in")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Removes a previously favorited item, logs out, logs back in, and verifies the item is no longer in the favorites list.")
     public void removeFavouriteTest() {
         page.locator("a[data-test='nav-menu']").click();
         page.locator("a[data-test='nav-my-favorites']").click();
@@ -141,7 +153,9 @@ public class SharedUserTests {
         assertThat(page.locator(".card-title:has-text('" + favouriteProduct + "')")).not().isVisible();
     }
 
-    @Test(priority = 4)
+    @Test(priority = 4, description = "Confirm product tags are displayed correctly")
+    @Story("User can view product details")
+    @Severity(SeverityLevel.MINOR)
     public void tagsTest() {
         page.locator("a[data-test='nav-categories']").click();
         page.locator("a[data-test='nav-hand-tools']").click();

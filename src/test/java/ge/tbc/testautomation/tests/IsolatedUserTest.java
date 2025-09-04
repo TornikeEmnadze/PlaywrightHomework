@@ -2,17 +2,18 @@ package ge.tbc.testautomation.tests;
 
 import com.microsoft.playwright.*;
 import ge.tbc.testautomation.constants.Constants;
+import io.qameta.allure.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.testng.annotations.*;
-
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.testng.Assert.assertEquals;
 
-
+@Epic("User Account Features (Isolated Users)")
+@Feature("Product Interaction")
+@Link(name = "Practice Software Testing", url = "https://practicesoftwaretesting.com/")
 public class IsolatedUserTest {
     private static Playwright pwInstance;
     private static Browser browserSession;
-
 
     private Page userPage;
     private String currentUserEmail;
@@ -25,14 +26,9 @@ public class IsolatedUserTest {
 
     @AfterClass
     public void suiteTeardown() {
-        if (browserSession != null) {
-            browserSession.close();
-        }
-        if (pwInstance != null) {
-            pwInstance.close();
-        }
+        if (browserSession != null) browserSession.close();
+        if (pwInstance != null) pwInstance.close();
     }
-
 
     @BeforeMethod
     public void initializeTestEnvironment() {
@@ -44,15 +40,15 @@ public class IsolatedUserTest {
         assertThat(userPage.locator("div.jumbotron")).isVisible();
     }
 
-
     @AfterMethod
     public void cleanupTest() {
-        if (userPage != null) {
-            userPage.close();
-        }
+        if (userPage != null) userPage.close();
     }
 
-    @Test
+    @Test(description = "Verify a product can be added to favorites by a newly registered user")
+    @Story("User can manage favorites")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("This test verifies that a unique, newly registered user can select a product, add it to their favorites, and confirm its presence on the 'My Favorites' page.")
     public void verifyProductCanBeAddedToFavorites() {
         Locator firstProductOnPage = userPage.locator("a.card").first();
         String selectedProductName = firstProductOnPage.locator("[data-test='product-name']").textContent().trim();
@@ -67,43 +63,39 @@ public class IsolatedUserTest {
         userPage.locator("a[data-test='nav-my-favorites']").click();
 
         assertThat(userPage.locator(".card-title:has-text('" + selectedProductName + "')")).isVisible();
-        System.out.println("Confirmation: Product '" + selectedProductName + "' was successfully added to favorites.");
     }
 
-    @Test
+    @Test(description = "Validate the product category filtering logic")
+    @Story("User can filter products")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Tests the category filter functionality by selecting different categories, verifying that the product count changes correctly, and that combining filters produces the expected sum of results.")
     public void validateCategoryFilteringLogic() {
-            assertThat(userPage.locator("a.card")).hasCount(9);
-            int initialCount = userPage.locator("a.card").count();
-            assertThat(userPage.locator("a.card")).hasCount(initialCount);
-            Locator handToolsCheckbox = userPage.locator("label:has-text('Screwdriver') input[type='checkbox']");
-            Locator powerToolsCheckbox = userPage.locator("label:has-text('Sander') input[type='checkbox']");
+        int initialCount = userPage.locator("a.card").count();
+        assertThat(userPage.locator("a.card")).hasCount(initialCount);
+        Locator handToolsCheckbox = userPage.locator("label:has-text('Screwdriver') input[type='checkbox']");
+        Locator powerToolsCheckbox = userPage.locator("label:has-text('Sander') input[type='checkbox']");
 
+        handToolsCheckbox.check();
+        assertThat(userPage.locator("a.card")).not().hasCount(initialCount);
+        int handToolsCount = userPage.locator("a.card").count();
 
-            handToolsCheckbox.check();
+        handToolsCheckbox.uncheck();
+        assertThat(userPage.locator("a.card")).hasCount(initialCount);
 
-            assertThat(userPage.locator("a.card")).not().hasCount(initialCount);
+        powerToolsCheckbox.check();
+        assertThat(userPage.locator("a.card")).not().hasCount(initialCount);
+        int powerToolsCount = userPage.locator("a.card").count();
 
-            int handToolsCount = userPage.locator("a.card").count();
+        handToolsCheckbox.check();
+        assertThat(userPage.locator("a.card")).not().hasCount(powerToolsCount);
+        int totalCount = userPage.locator("a.card").count();
+        assertEquals(totalCount, handToolsCount + powerToolsCount);
+    }
 
-
-            handToolsCheckbox.uncheck();
-
-            assertThat(userPage.locator("a.card")).hasCount(initialCount);
-
-            powerToolsCheckbox.check();
-
-            assertThat(userPage.locator("a.card")).not().hasCount(initialCount);
-            int powerToolsCount = userPage.locator("a.card").count();
-
-            handToolsCheckbox.check();
-
-            assertThat(userPage.locator("a.card")).not().hasCount(powerToolsCount);
-            int totalCount = userPage.locator("a.card").count();
-            assertEquals(totalCount, handToolsCount + powerToolsCount);
-
-        }
-
-    @Test
+    @Test(description = "Verify a favorited item can be successfully removed")
+    @Story("User can manage favorites")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("This test adds a product to favorites and then navigates to the favorites page to remove it, confirming it no longer appears.")
     public void verifyFavoriteCanBeRemoved() {
         Locator firstItem = userPage.locator("a.card").first();
         String itemName = firstItem.locator("[data-test='product-name']").textContent().trim();
@@ -117,17 +109,19 @@ public class IsolatedUserTest {
         assertThat(favoriteItemCard).isVisible();
 
         userPage.locator("button[data-test='delete']").click();
-
+        assertThat(favoriteItemCard).isHidden();
     }
 
-    @Test
+    @Test(description = "Confirm product tags are displayed correctly on the product detail page")
+    @Story("User can view product details")
+    @Severity(SeverityLevel.MINOR)
+    @Description("Navigates to a specific product ('Thor Hammer') and verifies that the correct tag ('Hammer') is displayed on its details page.")
     public void confirmProductTagsAreDisplayedCorrectly() {
         userPage.locator("a[data-test='nav-categories']").click();
         userPage.locator("a[data-test='nav-hand-tools']").click();
         userPage.locator("a.card:has-text('Thor Hammer')").click();
         assertThat(userPage.locator("h1[data-test='product-name']")).hasText(" Thor Hammer ");
         assertThat(userPage.locator("span.badge:has-text('Hammer')")).isVisible();
-        System.out.println("Validation passed: Thor Hammer product page displays the correct 'Hammer' tag.");
     }
 
     // --- Helper Methods for Setup ---

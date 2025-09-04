@@ -5,8 +5,8 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.SelectOption;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import ge.tbc.testautomation.pages.*;
+import io.qameta.allure.Step;
 import org.testng.Assert;
-
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 public class PurchaseSteps {
@@ -32,15 +32,17 @@ public class PurchaseSteps {
         this.shoppingCartPage = new ShoppingCartPage(page);
     }
 
+    @Step("Log in with email: {0}")
     public PurchaseSteps login(String email, String password) {
         homePage.signInLink.click();
         loginPage.emailInput.fill(email);
         loginPage.passwordInput.fill(password);
-        page.waitForTimeout(2000);// i tried various waitsForSelectors but nothing works i have to use this.
+        page.waitForTimeout(2000);
         loginPage.signInButton.click();
         return this;
     }
 
+    @Step("Log out from the application")
     public PurchaseSteps logout() {
         homePage.accountDropdown.click();
         homePage.signOutLink.click();
@@ -48,6 +50,7 @@ public class PurchaseSteps {
         return this;
     }
 
+    @Step("Verify item '{0}' is in the wishlist")
     public PurchaseSteps verifyItemInWishlist(String favouriteProduct) {
         page.waitForSelector(".logged-in");
         homePage.accountDropdown.click();
@@ -57,12 +60,14 @@ public class PurchaseSteps {
         return this;
     }
 
+    @Step("Select the first item from the wishlist")
     public PurchaseSteps selectItemFromWishlist() {
         wishlistPage.itemNamesInWishlist.first().click();
         productPage.addToCartButton.waitFor();
         return this;
     }
 
+    @Step("Configure product size and color and add to cart")
     public PurchaseSteps configureAndAddToCart() {
         productPage.sizeSwatch.click();
         productPage.colorSwatches.first().click();
@@ -71,6 +76,7 @@ public class PurchaseSteps {
         return this;
     }
 
+    @Step("Navigate to the checkout page")
     public PurchaseSteps navigateToCheckout() {
         page.waitForTimeout(1500);
         homePage.cartIcon.click();
@@ -78,36 +84,27 @@ public class PurchaseSteps {
         return this;
     }
 
-    // Turns out this site is faulty in every aspect person can imagine but when
-    // it comes to saving states and crashing all of a sudden they are pros
-    // and all of this hits even harder when u discover it on 4 am.
+    @Step("Fill shipping details and proceed to payment")
     public PurchaseSteps fillShippingDetailsAndProceed(String streetAddress, String city, String country, String state, String postcode, String phoneNumber) {
-        page.waitForTimeout(2000);
-
+        page.waitForTimeout(3000);
         if (checkoutPage.streetInput.first().isVisible()) {
-            System.out.println("Shipping form is visible. Filling details...");
             checkoutPage.streetInput.first().fill(streetAddress);
             checkoutPage.cityInput.fill(city);
             checkoutPage.countrySelect.selectOption(new SelectOption().setLabel(country));
-
             if (checkoutPage.regionInput.isVisible()) {
                 checkoutPage.regionInput.fill(state);
             } else {
                 page.locator("select[name='region_id']").selectOption(new SelectOption().setLabel(state));
             }
-
             checkoutPage.postCodeInput.fill(postcode);
             checkoutPage.phoneInput.fill(phoneNumber);
-        } else {
-            System.out.println("Shipping form not visible. A default address is likely selected. Proceeding...");
         }
-
         checkoutPage.shippingMethodRadio.check();
         checkoutPage.nextButton.click();
-
         return this;
     }
 
+    @Step("Validate Review & Payments page information for {0} {1}")
     public PurchaseSteps validateReviewAndPaymentsPage(String fistName, String lastname, String streetAddress, String city) {
         checkoutPaymentPage.shippingAddressInfo.waitFor();
         assertThat(checkoutPaymentPage.shippingAddressInfo).containsText(fistName + " " + lastname);
@@ -116,6 +113,7 @@ public class PurchaseSteps {
         return this;
     }
 
+    @Step("Attempt to apply an invalid discount code '{0}'")
     public PurchaseSteps attemptInvalidDiscount(String discountCode, String errorMessage) {
         checkoutPaymentPage.discountCodeToggle.click();
         checkoutPaymentPage.discountCodeInput.fill(discountCode);
@@ -125,48 +123,34 @@ public class PurchaseSteps {
         return this;
     }
 
+    @Step("Place the order and verify success page")
     public PurchaseSteps placeOrderAndVerifySuccess() {
         checkoutPaymentPage.placeOrderButton.click();
         successPage.successMessage.waitFor();
-
         assertThat(page).hasTitle("Success Page");
-
-        String orderNumber;
-        if (successPage.orderNumber.isVisible()) {
-            System.out.println("Using registered user order number locator.");
-            orderNumber = successPage.orderNumber.innerText();
-        } else {
-            System.out.println("Using guest user order number locator.");
-            orderNumber = successPage.orderNumberForGuest.innerText();
-        }
-
+        String orderNumber = successPage.orderNumber.isVisible() ? successPage.orderNumber.innerText() : successPage.orderNumberForGuest.innerText();
         Assert.assertNotNull(orderNumber, "Order number is null.");
         Assert.assertTrue(orderNumber.matches("\\d+"), "Order number is not a valid number: " + orderNumber);
-        System.out.println("ORDER PLACED: " + orderNumber);
         return this;
     }
 
-
+    @Step("Fill guest shipping details and proceed")
     public PurchaseSteps fillGuestShippingDetailsAndProceed(String email, String firstName, String lastName, String streetAddress, String city, String country, String state, String postcode, String phoneNumber) {
         checkoutPage.loadingMask.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.HIDDEN));
         page.waitForTimeout(1000);
-
         checkoutPage.emailInput.fill(email);
         page.locator("input[name='firstname']").fill(firstName);
         page.locator("input[name='lastname']").fill(lastName);
         checkoutPage.streetInput.first().fill(streetAddress);
         checkoutPage.cityInput.fill(city);
         checkoutPage.countrySelect.selectOption(new SelectOption().setLabel(country));
-
         if (page.locator("select[name='region_id']").isVisible()) {
             page.locator("select[name='region_id']").selectOption(new SelectOption().setLabel(state));
         } else {
             checkoutPage.regionInput.fill(state);
         }
-
         checkoutPage.postCodeInput.fill(postcode);
         checkoutPage.phoneInput.fill(phoneNumber);
-
         checkoutPage.shippingMethodRadio.check();
         checkoutPage.loadingMask.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.HIDDEN));
         checkoutPage.nextButton.click();
