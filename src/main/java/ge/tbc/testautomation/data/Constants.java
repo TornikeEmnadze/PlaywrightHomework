@@ -1,4 +1,4 @@
-package ge.tbc.testautomation.constants;
+package ge.tbc.testautomation.data;
 
 
 public class Constants {

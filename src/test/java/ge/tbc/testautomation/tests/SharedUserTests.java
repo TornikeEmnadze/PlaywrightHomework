@@ -1,8 +1,7 @@
 package ge.tbc.testautomation.tests;
 
 import com.microsoft.playwright.*;
-import com.microsoft.playwright.options.WaitForSelectorState;
-import ge.tbc.testautomation.constants.Constants;
+import ge.tbc.testautomation.data.Constants;
 import io.qameta.allure.*;
 import org.testng.annotations.*;
 

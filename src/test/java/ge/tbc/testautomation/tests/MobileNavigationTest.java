@@ -1,6 +1,6 @@
 package ge.tbc.testautomation.tests;
 
-import ge.tbc.testautomation.constants.MagnetoConstants;
+import ge.tbc.testautomation.data.MagnetoConstants;
 import ge.tbc.testautomation.runners.BaseTest;
 import ge.tbc.testautomation.steps.MobileNavigationSteps;
 import io.qameta.allure.*;
