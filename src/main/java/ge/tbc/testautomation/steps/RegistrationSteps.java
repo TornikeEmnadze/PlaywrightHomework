@@ -76,7 +76,7 @@ public class RegistrationSteps {
     }
 
     public RegistrationSteps verifySuccessAlert(String SuccessMessage){
-        page.onDialog(dialog -> {
+        page.onceDialog(dialog -> {
             Assert.assertEquals(dialog.message(), SuccessMessage);
 
             dialog.accept();
@@ -84,7 +84,13 @@ public class RegistrationSteps {
         return this;
     }
 
-    public void refreshPage() {
-       page.reload();
+    public void clearForms() {
+        registrationPage.city.clear();
+        registrationPage.firstNameInput.clear();
+        registrationPage.lastNameInput.clear();
+        registrationPage.address1.clear();
+        registrationPage.address2.clear();
+        registrationPage.contact1.clear();
+        registrationPage.contact2.clear();
     }
 }
