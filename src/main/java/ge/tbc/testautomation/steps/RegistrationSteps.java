@@ -85,6 +85,6 @@ public class RegistrationSteps {
     }
 
     public void refreshPage() {
-       page.navigate(TechcanvassConstants.PAGE_URL);
+       page.reload();
     }
 }
