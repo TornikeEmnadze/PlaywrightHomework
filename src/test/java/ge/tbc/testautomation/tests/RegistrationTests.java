@@ -35,5 +35,8 @@ public class RegistrationTests extends BaseTest {
                 .clickRegisterButton()
                 .verifySuccessAlert(TechcanvassConstants.SUCCESS_MESSAGE);
          // September 6 12:57 this site broke too, it isn't responding
+         // turns out this website hates when u refresh it
+
+        registrationSteps.refreshPage();
     }
 }

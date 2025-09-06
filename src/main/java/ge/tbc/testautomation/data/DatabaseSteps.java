@@ -25,7 +25,7 @@ public class DatabaseSteps {
             }
         } catch (SQLException e) {
             System.out.println("!!!!!!!!!! DATABASE CONNECTION FAILED !!!!!!!!!!");
-            e.printStackTrace(); // This is the most important line!
+            e.printStackTrace();
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             throw new RuntimeException("Failed to fetch registration data. See console for details.", e);
         }

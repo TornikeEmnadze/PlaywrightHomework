@@ -15,7 +15,7 @@ public class MSSQLConnection {
             return DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
         } catch (SQLException e) {
             System.out.println("!!!!!!!!!! FAILED TO GET DB CONNECTION !!!!!!!!!!");
-            e.printStackTrace(); // This will print the detailed SQL error
+            e.printStackTrace();
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             throw new RuntimeException("Failed to connect to the database. See console for details.", e);
         }

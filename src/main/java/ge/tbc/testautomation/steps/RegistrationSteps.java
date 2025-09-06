@@ -2,6 +2,7 @@ package ge.tbc.testautomation.steps;
 
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.SelectOption;
+import ge.tbc.testautomation.data.TechcanvassConstants;
 import ge.tbc.testautomation.pages.RegistrationPage;
 import org.testng.Assert;
 
@@ -84,6 +85,6 @@ public class RegistrationSteps {
     }
 
     public void refreshPage() {
-        page.reload();
+       page.navigate(TechcanvassConstants.PAGE_URL);
     }
 }
