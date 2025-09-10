@@ -7,6 +7,7 @@ import ge.tbc.testautomation.steps.AuthSteps;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+@Test(groups = {"saveToFavoritesWhileUnauthorized [NEW-T2]"})
 public class WishlistTest extends BaseTest {
     AuthSteps authSteps;
 

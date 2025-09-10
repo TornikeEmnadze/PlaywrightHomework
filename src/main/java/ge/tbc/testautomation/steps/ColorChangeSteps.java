@@ -24,7 +24,6 @@ public class ColorChangeSteps {
     }
 
     public ColorChangeSteps validateColorChange(int numToTest){
-        Random random= new Random();
         homePage.hotSellerItems.first().waitFor();
         List<Locator> hotSellerItems=homePage.hotSellerItems.all();
         Collections.shuffle(hotSellerItems); // shuffle items in list to pick "numToTest" random items
